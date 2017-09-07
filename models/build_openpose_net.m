@@ -1,5 +1,5 @@
 function build_openpose_net()
-addpath('./matconvnet/matlab')
+addpath('../matconvnet/matlab')
 vl_setupnn;
 net = dagnn.DagNN() ;
 lastAdded.var = 'image' ;
@@ -241,28 +241,28 @@ save('matconvnet_coco_openpose_model.mat', '-struct', 'netStruct') ;
 clear netStruct ;
 
 
-function add_conv_relu(name_temp, ksize, stride, depth, varargin)
-% add a Convolutional + ReLU block
-  args.relu = true ;
-  args = vl_argparse(args, varargin) ;
-  
-  conv_name = sprintf(name_temp,'conv');
-  pars = {[conv_name 'w'], [conv_name 'b']} ;
-  net.addLayer(conv_name, ...
-               dagnn.Conv('size', [ksize ksize lastAdded.depth depth], ...
-                          'stride', stride, ....
-                          'pad', (ksize - 1) / 2, ...
-                          'hasBias', true, ...
-                          'opts', {'cudnnworkspacelimit', opts.cudnnWorkspaceLimit}), ...
-                          lastAdded.var, conv_name, pars) ;
-  lastAdded.var = conv_name;
-  lastAdded.depth = depth ;
-  if args.relu
-      relu_name = sprintf(name_temp,'relu');
-      net.addLayer(relu_name , dagnn.ReLU(), lastAdded.var, relu_name) ;
-      lastAdded.var = relu_name ;
-  end
-end
+    function add_conv_relu(name_temp, ksize, stride, depth, varargin)
+    % add a Convolutional + ReLU block
+      args.relu = true ;
+      args = vl_argparse(args, varargin) ;
+
+      conv_name = sprintf(name_temp,'conv');
+      pars = {[conv_name 'w'], [conv_name 'b']} ;
+      net.addLayer(conv_name, ...
+                   dagnn.Conv('size', [ksize ksize lastAdded.depth depth], ...
+                              'stride', stride, ....
+                              'pad', (ksize - 1) / 2, ...
+                              'hasBias', true, ...
+                              'opts', {'cudnnworkspacelimit', opts.cudnnWorkspaceLimit}), ...
+                              lastAdded.var, conv_name, pars) ;
+      lastAdded.var = conv_name;
+      lastAdded.depth = depth ;
+      if args.relu
+          relu_name = sprintf(name_temp,'relu');
+          net.addLayer(relu_name , dagnn.ReLU(), lastAdded.var, relu_name) ;
+          lastAdded.var = relu_name ;
+      end
+    end
 
     function init_net()
         % load param
